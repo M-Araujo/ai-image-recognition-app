@@ -2,23 +2,28 @@
   <div class="face-recognition-container">
     <h2>Face Detection</h2>
 
-   <FileUpload 
-  mode="advanced" 
-  name="image" 
-  accept="image/*" 
-  :maxFileSize="2000000" 
-  @select="handleFileUpload"
-  @clear="clearImage"
-  chooseLabel="📸 Upload Image"
-  class="custom-file-upload"
-/>
-
+    <FileUpload
+      mode="advanced"
+      name="image"
+      accept="image/*"
+      :maxFileSize="2000000"
+      @select="handleFileUpload"
+      @clear="clearImage"
+      chooseLabel="📸 Upload Image"
+      :auto="true"
+      :showUploadButton="false"
+    />
 
     <!-- Image Preview & Canvas -->
     <div class="image-container" v-if="previewImage">
       <h3>Preview:</h3>
       <div class="canvas-wrapper">
-        <img ref="imageRef" :src="previewImage" alt="Uploaded Image" @load="detectFaces" />
+        <img
+          ref="imageRef"
+          :src="previewImage"
+          alt="Uploaded Image"
+          @load="detectFaces"
+        />
         <canvas ref="canvasRef"></canvas>
       </div>
     </div>
@@ -76,7 +81,10 @@ export default {
 
       try {
         // Detect faces using TinyFaceDetector
-        const detections = await faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions());
+        const detections = await faceapi.detectAllFaces(
+          image,
+          new faceapi.TinyFaceDetectorOptions()
+        );
 
         // Resize results for correct scaling
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
@@ -85,7 +93,7 @@ export default {
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        resizedDetections.forEach(detection => {
+        resizedDetections.forEach((detection) => {
           const box = detection.box;
           ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
@@ -102,8 +110,8 @@ export default {
     clearImage() {
       this.previewImage = null;
       this.faceCount = null;
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -121,7 +129,7 @@ export default {
 .canvas-wrapper {
   position: relative;
   display: inline-block;
-  border: 3px solid #4CAF50; /* ✅ Green border */
+  border: 3px solid #4caf50; /* ✅ Green border */
   border-radius: 10px; /* ✅ Rounded edges */
   overflow: hidden;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* ✅ Adds soft shadow */
@@ -136,7 +144,7 @@ canvas {
 .custom-file-upload {
   transition: all 0.3s ease-in-out;
   border-radius: 8px;
-  background-color: #4CAF50; /* ✅ Green button */
+  background-color: #4caf50; /* ✅ Green button */
   color: white;
   font-weight: bold;
   padding: 10px 15px;
