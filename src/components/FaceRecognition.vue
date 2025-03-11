@@ -14,19 +14,18 @@
       :showUploadButton="false"
     />
 
-    <!-- Image Preview & Canvas -->
-    <div class="image-container" v-if="previewImage">
-      <h3>Preview:</h3>
-      <div class="canvas-wrapper">
-        <img
-          ref="imageRef"
-          :src="previewImage"
-          alt="Uploaded Image"
-          @load="detectFaces"
-        />
-        <canvas ref="canvasRef"></canvas>
-      </div>
+<!-- Image Preview & Canvas -->
+<div class="image-container" v-if="previewImage">
+  <div class="preview-wrapper">
+    <h3 class="preview-text">Preview:</h3> <!-- ✅ Now inside a wrapper for correct centering -->
+    <div class="canvas-wrapper">
+      <img ref="imageRef" :src="previewImage" alt="Uploaded Image" @load="detectFaces" />
+      <canvas ref="canvasRef"></canvas>
     </div>
+  </div>
+</div>
+
+
 
     <p v-if="loading">🔄 Analyzing Image...</p>
     <p v-if="faceCount !== null">🟢 Detected Faces: {{ faceCount }}</p>
@@ -116,50 +115,64 @@ export default {
 </script>
 
 <style scoped>
-.face-recognition-container {
+
+.preview-wrapper {
+  display: flex;
+  flex-direction: column; /* ✅ Stack text above the image */
+  align-items: center; /* ✅ Ensures everything is centered */
+  margin-bottom: 10px; /* ✅ Adds spacing */
+}
+
+.preview-text {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px; /* ✅ Ensures spacing between text & image */
   text-align: center;
+}
+
+
+.face-recognition-container {
+  max-width: 800px; /* ✅ Limits width for better layout */
+  margin: 40px auto; /* ✅ Centers the whole container */
+  text-align: center; /* ✅ Ensures text & content are centered */
+  background: #ffffff;
   padding: 20px;
 }
 
 .image-container {
-  position: relative;
-  display: inline-block;
+  display: flex;
+  flex-direction: column; /* ✅ Ensures elements stack vertically */
+  align-items: center; /* ✅ Centers everything inside */
+  justify-content: center;
+  margin-top: 20px;
+  width: 100%;
 }
 
 .canvas-wrapper {
   position: relative;
-  display: inline-block;
-  border: 3px solid #4caf50; /* ✅ Green border */
-  border-radius: 10px; /* ✅ Rounded edges */
+  display: flex;
+  justify-content: center; /* ✅ Ensures image & canvas are centered */
+  align-items: center;
+  max-width: 90%;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* ✅ Adds soft shadow */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.image-container img {
+  max-width: 90%; /* ✅ Prevents oversized images */
+  height: auto;
+  display: block;
+  border-radius: 8px;
 }
 
 canvas {
+  max-width: 90%;
+  height: auto;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-.custom-file-upload {
-  transition: all 0.3s ease-in-out;
-  border-radius: 8px;
-  background-color: #4caf50; /* ✅ Green button */
-  color: white;
-  font-weight: bold;
-  padding: 10px 15px;
-}
 
-.image-container {
-  opacity: 0;
-  transform: scale(0.95);
-  animation: fadeIn 0.5s forwards;
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 </style>
