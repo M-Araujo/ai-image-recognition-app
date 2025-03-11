@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@primeuix/themes": "^1.0.0",
+    "@tensorflow/tfjs-core": "^2.8.0",
+    "face-api.js": "^0.18.0",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.1",
