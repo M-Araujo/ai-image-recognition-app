@@ -2,15 +2,17 @@
   <div class="face-recognition-container">
     <h2>Face Detection</h2>
 
-    <!-- Image Upload -->
-    <FileUpload 
-      mode="advanced" 
-      name="image" 
-      accept="image/*" 
-      :maxFileSize="2000000" 
-      @select="handleFileUpload"
-      @clear="clearImage"
-    />
+   <FileUpload 
+  mode="advanced" 
+  name="image" 
+  accept="image/*" 
+  :maxFileSize="2000000" 
+  @select="handleFileUpload"
+  @clear="clearImage"
+  chooseLabel="📸 Upload Image"
+  class="custom-file-upload"
+/>
+
 
     <!-- Image Preview & Canvas -->
     <div class="image-container" v-if="previewImage">
@@ -118,11 +120,38 @@ export default {
 
 .canvas-wrapper {
   position: relative;
+  display: inline-block;
+  border: 3px solid #4CAF50; /* ✅ Green border */
+  border-radius: 10px; /* ✅ Rounded edges */
+  overflow: hidden;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* ✅ Adds soft shadow */
 }
 
 canvas {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.custom-file-upload {
+  transition: all 0.3s ease-in-out;
+  border-radius: 8px;
+  background-color: #4CAF50; /* ✅ Green button */
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+}
+
+.image-container {
+  opacity: 0;
+  transform: scale(0.95);
+  animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
