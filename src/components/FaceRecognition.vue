@@ -13,6 +13,7 @@
       />
     </div>
 
+    <!-- Image Preview & Canvas -->
     <div class="image-container" v-if="src">
       <div class="preview-wrapper">
         <h3 class="preview-text">Preview:</h3>
@@ -30,13 +31,18 @@
       </div>
     </div>
 
-    <p v-if="loading">🔄 Analyzing Image...</p>
+    <!-- Loading Indicator -->
+    <p v-if="loading">🔄 Detecting Faces...</p>
+
+    <!-- Face Count -->
     <p v-if="faceCount !== null">🟢 Detected Faces: {{ faceCount }}</p>
+
+    <!-- Clear Image Button -->
+    <button v-if="src" class="clear-btn" @click="clearImage">❌ Clear Image</button>
   </div>
 </template>
 
 <script>
-import { ref } from "vue";
 import FileUpload from "primevue/fileupload";
 import * as faceapi from "face-api.js";
 import "face-api.js/dist/face-api"; // ✅ Ensures all Face-api.js functions are available
@@ -54,25 +60,33 @@ export default {
     await this.loadModels();
   },
   methods: {
-    onFileSelect(event) {
-      const file = event.files[0];
-      const reader = new FileReader();
-
-      reader.onload = async (e) => {
-        this.src = e.target.result;
-      };
-
-      reader.readAsDataURL(file);
-    },
     async loadModels() {
       try {
         await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+        console.log("✅ Face-api.js models loaded successfully");
       } catch (error) {
         console.error("❌ Error loading Face-api.js models", error);
       }
     },
 
+    onFileSelect(event) {
+      const file = event.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        // ✅ Free memory if there's an existing image
+        if (this.src) {
+          URL.revokeObjectURL(this.src);
+        }
+        this.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    },
+
     async detectFaces() {
+      if (!this.src) return;
+
       this.loading = true;
       this.faceCount = null;
 
@@ -84,8 +98,8 @@ export default {
 
       canvas.width = displaySize.width;
       canvas.height = displaySize.height;
-      try {
 
+      try {
         const detections = await faceapi.detectAllFaces(
           image,
           new faceapi.TinyFaceDetectorOptions()
@@ -109,6 +123,16 @@ export default {
 
       this.loading = false;
     },
+
+    clearImage() {
+      console.log("🚀 clearImage() function called!");
+
+      if (this.src) {
+        URL.revokeObjectURL(this.src); // ✅ Free memory
+      }
+      this.src = null;
+      this.faceCount = null;
+    },
   },
 };
 </script>
@@ -116,30 +140,30 @@ export default {
 <style scoped>
 .preview-wrapper {
   display: flex;
-  flex-direction: column; /* ✅ Stack text above the image */
-  align-items: center; /* ✅ Ensures everything is centered */
-  margin-bottom: 10px; /* ✅ Adds spacing */
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .preview-text {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 5px; /* ✅ Ensures spacing between text & image */
+  margin-bottom: 5px;
   text-align: center;
 }
 
 .face-recognition-container {
-  max-width: 800px; /* ✅ Limits width for better layout */
-  margin: 40px auto; /* ✅ Centers the whole container */
-  text-align: center; /* ✅ Ensures text & content are centered */
+  max-width: 800px;
+  margin: 40px auto;
+  text-align: center;
   background: #ffffff;
   padding: 20px;
 }
 
 .image-container {
   display: flex;
-  flex-direction: column; /* ✅ Ensures elements stack vertically */
-  align-items: center; /* ✅ Centers everything inside */
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   margin-top: 20px;
   width: 100%;
@@ -148,7 +172,7 @@ export default {
 .canvas-wrapper {
   position: relative;
   display: flex;
-  justify-content: center; /* ✅ Ensures image & canvas are centered */
+  justify-content: center;
   align-items: center;
   max-width: 90%;
   border-radius: 10px;
@@ -157,7 +181,7 @@ export default {
 }
 
 .image-container img {
-  max-width: 90%; /* ✅ Prevents oversized images */
+  max-width: 90%;
   height: auto;
   display: block;
   border-radius: 8px;
@@ -169,5 +193,21 @@ canvas {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.clear-btn {
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #ff4c4c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.clear-btn:hover {
+  background-color: #d32f2f;
 }
 </style>
