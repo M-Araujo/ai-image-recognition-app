@@ -2,30 +2,33 @@
   <div class="face-recognition-container">
     <h2>Face Detection</h2>
 
-    <FileUpload
-      mode="advanced"
-      name="image"
-      accept="image/*"
-      :maxFileSize="2000000"
-      @select="handleFileUpload"
-      @clear="clearImage"
-      chooseLabel="📸 Upload Image"
-      :auto="true"
-      :showUploadButton="false"
-    />
-
-<!-- Image Preview & Canvas -->
-<div class="image-container" v-if="previewImage">
-  <div class="preview-wrapper">
-    <h3 class="preview-text">Preview:</h3> <!-- ✅ Now inside a wrapper for correct centering -->
-    <div class="canvas-wrapper">
-      <img ref="imageRef" :src="previewImage" alt="Uploaded Image" @load="detectFaces" />
-      <canvas ref="canvasRef"></canvas>
+    <div class="card flex flex-col items-center gap-6">
+      <FileUpload
+        mode="basic"
+        @select="onFileSelect"
+        customUpload
+        auto
+        severity="secondary"
+        class="p-button-outlined"
+      />
     </div>
-  </div>
-</div>
 
-
+    <div class="image-container" v-if="src">
+      <div class="preview-wrapper">
+        <h3 class="preview-text">Preview:</h3>
+        <div class="canvas-wrapper">
+          <img
+            ref="imageRef"
+            v-if="src"
+            :src="src"
+            alt="Image"
+            class="shadow-md rounded-xl w-full sm:w-64"
+            @load="detectFaces"
+          />
+          <canvas ref="canvasRef"></canvas>
+        </div>
+      </div>
+    </div>
 
     <p v-if="loading">🔄 Analyzing Image...</p>
     <p v-if="faceCount !== null">🟢 Detected Faces: {{ faceCount }}</p>
@@ -33,6 +36,7 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import FileUpload from "primevue/fileupload";
 import * as faceapi from "face-api.js";
 import "face-api.js/dist/face-api"; // ✅ Ensures all Face-api.js functions are available
@@ -41,54 +45,53 @@ export default {
   components: { FileUpload },
   data() {
     return {
-      previewImage: null, // Stores the image preview URL
-      faceCount: null, // Number of detected faces
-      loading: false, // Loading state
+      faceCount: null,
+      loading: false,
+      src: null,
     };
   },
   async mounted() {
     await this.loadModels();
   },
   methods: {
+    onFileSelect(event) {
+      const file = event.files[0];
+      const reader = new FileReader();
+
+      reader.onload = async (e) => {
+        this.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    },
     async loadModels() {
       try {
         await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
-        console.log("✅ Face-api.js models loaded successfully");
       } catch (error) {
         console.error("❌ Error loading Face-api.js models", error);
       }
     },
-    handleFileUpload(event) {
-      const file = event.files[0];
-      if (file) {
-        this.previewImage = URL.createObjectURL(file);
-      }
-    },
+
     async detectFaces() {
       this.loading = true;
       this.faceCount = null;
 
-      await this.$nextTick(); // Ensure image is fully loaded
+      await this.$nextTick();
 
       const image = this.$refs.imageRef;
       const canvas = this.$refs.canvasRef;
       const displaySize = { width: image.width, height: image.height };
 
-      // Resize canvas to match the image
       canvas.width = displaySize.width;
       canvas.height = displaySize.height;
-
       try {
-        // Detect faces using TinyFaceDetector
+
         const detections = await faceapi.detectAllFaces(
           image,
           new faceapi.TinyFaceDetectorOptions()
         );
 
-        // Resize results for correct scaling
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-        // ✅ Fix: Manually Draw Bounding Boxes Instead of `drawDetections`
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -106,16 +109,11 @@ export default {
 
       this.loading = false;
     },
-    clearImage() {
-      this.previewImage = null;
-      this.faceCount = null;
-    },
   },
 };
 </script>
 
 <style scoped>
-
 .preview-wrapper {
   display: flex;
   flex-direction: column; /* ✅ Stack text above the image */
@@ -129,7 +127,6 @@ export default {
   margin-bottom: 5px; /* ✅ Ensures spacing between text & image */
   text-align: center;
 }
-
 
 .face-recognition-container {
   max-width: 800px; /* ✅ Limits width for better layout */
@@ -173,6 +170,4 @@ canvas {
   top: 0;
   left: 0;
 }
-
-
 </style>
