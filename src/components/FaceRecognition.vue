@@ -2,50 +2,51 @@
   <div class="face-recognition-container">
     <h2>Face Detection</h2>
 
-    <div class="card flex flex-col items-center gap-6">
-      <FileUpload
-        mode="basic"
-        @select="onFileSelect"
-        customUpload
-        auto
-        severity="secondary"
-        class="p-button-outlined"
-      />
-    </div>
+    <div class="card-container">
+      <div class="upload-container">
+        <FileUpload
+          mode="basic"
+          @select="onFileSelect"
+          customUpload
+          auto
+          severity="secondary"
+          class="custom-upload-btn"
+        />
+      </div>
 
-    <!-- Image Preview & Canvas -->
-    <div class="image-container" v-if="src">
-      <div class="preview-wrapper">
-        <h3 class="preview-text">Preview:</h3>
+      <div class="image-preview-container" v-if="src">
         <div class="canvas-wrapper">
           <img
             ref="imageRef"
             v-if="src"
             :src="src"
-            alt="Image"
-            class="shadow-md rounded-xl w-full sm:w-64"
+            alt="Uploaded Image"
+            class="image-preview"
             @load="detectFaces"
           />
           <canvas ref="canvasRef"></canvas>
         </div>
       </div>
+
+      <div class="status-container">
+        <div v-if="loading" class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Detecting Faces...</p>
+        </div>
+        <p v-if="faceCount !== null" class="face-count">
+          🟢 Detected Faces: {{ faceCount }}
+        </p>
+      </div>
+
+      <button v-if="src" class="clear-btn" @click="clearImage">❌ Clear Image</button>
     </div>
-
-    <!-- Loading Indicator -->
-    <p v-if="loading">🔄 Detecting Faces...</p>
-
-    <!-- Face Count -->
-    <p v-if="faceCount !== null">🟢 Detected Faces: {{ faceCount }}</p>
-
-    <!-- Clear Image Button -->
-    <button v-if="src" class="clear-btn" @click="clearImage">❌ Clear Image</button>
   </div>
 </template>
 
 <script>
 import FileUpload from "primevue/fileupload";
 import * as faceapi from "face-api.js";
-import "face-api.js/dist/face-api"; // ✅ Ensures all Face-api.js functions are available
+import "face-api.js/dist/face-api";
 
 export default {
   components: { FileUpload },
@@ -74,7 +75,6 @@ export default {
       const reader = new FileReader();
 
       reader.onload = async (e) => {
-        // ✅ Free memory if there's an existing image
         if (this.src) {
           URL.revokeObjectURL(this.src);
         }
@@ -96,6 +96,7 @@ export default {
       const canvas = this.$refs.canvasRef;
       const displaySize = { width: image.width, height: image.height };
 
+      // ✅ Ensure canvas matches image size
       canvas.width = displaySize.width;
       canvas.height = displaySize.height;
 
@@ -106,14 +107,15 @@ export default {
         );
 
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         resizedDetections.forEach((detection) => {
-          const box = detection.box;
+          const { x, y, width, height } = detection.box;
           ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
-          ctx.strokeRect(box.x, box.y, box.width, box.height);
+          ctx.strokeRect(x, y, width, height);
         });
 
         this.faceCount = resizedDetections.length;
@@ -128,7 +130,7 @@ export default {
       console.log("🚀 clearImage() function called!");
 
       if (this.src) {
-        URL.revokeObjectURL(this.src); // ✅ Free memory
+        URL.revokeObjectURL(this.src);
       }
       this.src = null;
       this.faceCount = null;
@@ -138,70 +140,119 @@ export default {
 </script>
 
 <style scoped>
-.preview-wrapper {
+.face-recognition-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  background: #f9f9f9;
+}
+
+.card-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+
+.upload-container {
+  margin-bottom: 15px;
+}
+
+.custom-upload-btn {
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  transition: 0.3s ease;
+}
+
+.custom-upload-btn:hover {
+  background-color: #0056b3;
+}
+
+
+.image-preview-container {
+  display: flex;
+  justify-content: center;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.preview-text {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
-  text-align: center;
-}
-
-.face-recognition-container {
-  max-width: 800px;
-  margin: 40px auto;
-  text-align: center;
-  background: #ffffff;
-  padding: 20px;
-}
-
-.image-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-  width: 100%;
-}
 
 .canvas-wrapper {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  max-width: 90%;
-  border-radius: 10px;
-  overflow: hidden;
+  display: inline-block;
+}
+
+
+.image-preview {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.image-container img {
-  max-width: 90%;
-  height: auto;
-  display: block;
-  border-radius: 8px;
-}
-
 canvas {
-  max-width: 90%;
-  height: auto;
   position: absolute;
   top: 0;
   left: 0;
+  width: 220px;
+  height: 220px;
 }
 
+/* Status Container */
+.status-container {
+  margin-top: 10px;
+}
+
+/* Face Count */
+.face-count {
+  font-size: 18px;
+  font-weight: bold;
+  color: #28a745;
+  margin-top: 10px;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.spinner {
+  width: 25px;
+  height: 25px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Clear Button */
 .clear-btn {
   margin-top: 10px;
   padding: 8px 15px;
   background-color: #ff4c4c;
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
   transition: 0.3s;
