@@ -1,50 +1,58 @@
 <template>
   <div class="face-recognition-container">
-    <h2>Face Detection</h2>
+    <h2 class="title">Face Detection</h2>
 
-    <div class="card-container">
-      <div class="upload-container">
-        <FileUpload
-          mode="basic"
-          @select="onFileSelect"
-          customUpload
-          auto
-          severity="secondary"
-          class="custom-upload-btn"
+    <!-- Upload Button -->
+    <div class="upload-container">
+      <FileUpload
+        mode="basic"
+        @select="onFileSelect"
+        customUpload
+        auto
+        class="custom-btn upload-btn"
+      >
+        <i class="pi pi-upload"></i> Upload Image
+      </FileUpload>
+    </div>
+
+    <!-- Image Preview & Canvas -->
+    <div class="image-preview-container" v-if="src">
+      <div class="canvas-wrapper">
+        <img
+          ref="imageRef"
+          v-if="src"
+          :src="src"
+          alt="Uploaded Image"
+          class="image-preview"
+          @load="detectFaces"
         />
+        <canvas ref="canvasRef"></canvas>
       </div>
+    </div>
 
-      <div class="image-preview-container" v-if="src">
-        <div class="canvas-wrapper">
-          <img
-            ref="imageRef"
-            v-if="src"
-            :src="src"
-            alt="Uploaded Image"
-            class="image-preview"
-            @load="detectFaces"
-          />
-          <canvas ref="canvasRef"></canvas>
-        </div>
+    <!-- Status (Face Count / Loading) -->
+    <div class="status-container">
+      <div v-if="loading" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Detecting Faces...</p>
       </div>
+      <p v-if="faceCount !== null" class="face-count">
+        🟢 Detected Faces: {{ faceCount }}
+      </p>
+    </div>
 
-      <div class="status-container">
-        <div v-if="loading" class="loading-spinner">
-          <div class="spinner"></div>
-          <p>Detecting Faces...</p>
-        </div>
-        <p v-if="faceCount !== null" class="face-count">
-          🟢 Detected Faces: {{ faceCount }}
-        </p>
-      </div>
-
-      <button v-if="src" class="clear-btn" @click="clearImage">❌ Clear Image</button>
+    <!-- Clear Image Button -->
+    <div class="button-container">
+      <button v-if="src" class="custom-btn clear-btn" @click="clearImage">
+        <i class="pi pi-trash"></i> Clear Image
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 import FileUpload from "primevue/fileupload";
+import "primeicons/primeicons.css"; // ✅ Import PrimeIcons for icons
 import * as faceapi from "face-api.js";
 import "face-api.js/dist/face-api";
 
@@ -96,7 +104,6 @@ export default {
       const canvas = this.$refs.canvasRef;
       const displaySize = { width: image.width, height: image.height };
 
-      // ✅ Ensure canvas matches image size
       canvas.width = displaySize.width;
       canvas.height = displaySize.height;
 
@@ -112,10 +119,10 @@ export default {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         resizedDetections.forEach((detection) => {
-          const { x, y, width, height } = detection.box;
+          const box = detection.box;
           ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
-          ctx.strokeRect(x, y, width, height);
+          ctx.strokeRect(box.x, box.y, box.width, box.height);
         });
 
         this.faceCount = resizedDetections.length;
@@ -140,62 +147,84 @@ export default {
 </script>
 
 <style scoped>
+/* ✅ Maximum Compact Layout */
 .face-recognition-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 75vh;
   text-align: center;
   background: #f9f9f9;
+  padding-top: 5px;
 }
 
-.card-container {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  width: 90%;
-  max-width: 500px;
-  text-align: center;
+/* ✅ Smaller Title */
+.title {
+  font-size: 18px;
+  margin-bottom: 5px;
 }
 
-
+/* ✅ Upload Button (Tighter Spacing) */
 .upload-container {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
-.custom-upload-btn {
+/* ✅ Slightly Bigger Buttons */
+.custom-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 13px; /* ✅ Slightly bigger for better clickability */
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease-in-out;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Matching Hover Effects */
+.upload-btn {
   background-color: #007bff;
   color: white;
-  border-radius: 8px;
-  padding: 12px 20px;
-  font-size: 16px;
-  transition: 0.3s ease;
 }
 
-.custom-upload-btn:hover {
+.upload-btn:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
 }
 
+/* Clear Button */
+.clear-btn {
+  background-color: #ff4c4c;
+  color: white;
+  margin-top: 5px;
+}
 
+.clear-btn:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+
+/* ✅ Image & Canvas are Now Bigger */
 .image-preview-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
-
 
 .canvas-wrapper {
   position: relative;
   display: inline-block;
 }
 
-
 .image-preview {
-  width: 220px;
-  height: 220px;
+  width: 190px; /* ✅ Increased */
+  height: 190px;
   object-fit: cover;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
@@ -205,24 +234,23 @@ canvas {
   position: absolute;
   top: 0;
   left: 0;
-  width: 220px;
-  height: 220px;
+  width: 190px; /* ✅ Increased */
+  height: 190px;
 }
 
-/* Status Container */
+/* ✅ Status Section More Compact */
 .status-container {
-  margin-top: 10px;
+  margin-top: 4px;
 }
 
-/* Face Count */
+/* ✅ Slightly Bigger Face Count */
 .face-count {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
   color: #28a745;
-  margin-top: 10px;
 }
 
-/* Loading Spinner */
+/* ✅ Loading Spinner Adjustments */
 .loading-spinner {
   display: flex;
   align-items: center;
@@ -231,9 +259,9 @@ canvas {
 }
 
 .spinner {
-  width: 25px;
-  height: 25px;
-  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
   border-top-color: #007bff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -243,22 +271,5 @@ canvas {
   to {
     transform: rotate(360deg);
   }
-}
-
-/* Clear Button */
-.clear-btn {
-  margin-top: 10px;
-  padding: 8px 15px;
-  background-color: #ff4c4c;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.clear-btn:hover {
-  background-color: #d32f2f;
 }
 </style>
