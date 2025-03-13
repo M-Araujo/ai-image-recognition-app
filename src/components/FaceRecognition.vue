@@ -1,9 +1,22 @@
 <template>
+  <!-- 🏠 Intro Section -->
+  <div class="intro-container">
+    <h1 class="intro-title">Welcome to My Face Detection App! 👋</h1>
+    <p class="intro-text">
+      This is an AI-powered face detection app built with Vue.js & Face-api.js.  
+      Upload an image, and the app will detect faces instantly!  
+    </p>
+    <p class="intro-text">
+      I'm Miriam Araújo, a passionate web developer focused on JavaScript, Vue.js, and AI applications.  
+    </p>
+  </div>
+
+  <!-- 🏠 Face Detection App -->
   <div class="face-recognition-container">
     <h2 class="title">Face Detection</h2>
 
-    <!-- Upload Button -->
-    <div class="upload-container">
+    <!-- Upload & Clear Button (Aligned) -->
+    <div class="button-group">
       <FileUpload
         mode="basic"
         @select="onFileSelect"
@@ -13,12 +26,15 @@
       >
         <i class="pi pi-upload"></i> Upload Image
       </FileUpload>
+
+      <button v-if="src" class="custom-btn clear-btn" @click="clearImage">
+        <i class="pi pi-trash"></i> Clear Image
+      </button>
     </div>
 
     <!-- Image Preview & Canvas -->
     <div class="image-preview-container" v-if="src">
       <div class="canvas-wrapper">
-        <!-- The fade-in effect is applied via the "fade-in" class -->
         <img
           ref="imageRef"
           v-if="src"
@@ -27,7 +43,7 @@
           class="image-preview fade-in"
           @load="detectFaces"
         />
-        <canvas ref="canvasRef"></canvas>
+        <canvas ref="canvasRef" class="canvas-overlay"></canvas>
       </div>
     </div>
 
@@ -40,26 +56,30 @@
 
       <p class="face-count">
         <span v-if="faceCount !== null && faceCount > 0" class="text-green-500">
-          🟢 Detected Faces: {{ faceCount }}</span
-        >
+          🟢 Detected Faces: {{ faceCount }}
+        </span>
         <span v-else-if="faceCount === 0" class="text-red-500">
-          🔴 No Faces Detected</span
-        >
+          🔴 No Faces Detected
+        </span>
         <span v-else> ⏳ Waiting for image...</span>
       </p>
     </div>
-
-    <div class="button-container">
-      <button v-if="src" class="custom-btn clear-btn" @click="clearImage">
-        <i class="pi pi-trash"></i> Clear Image
-      </button>
-    </div>
   </div>
+
+  <!-- 📞 Discrete Footer -->
+  <footer class="footer">
+    <p>🔗 Connect with me:</p>
+    <div class="social-links">
+      <a href="https://github.com/miriam-araujo" target="_blank"><i class="pi pi-github"></i> GitHub</a>
+      <a href="https://www.linkedin.com/in/miriam-araujo" target="_blank"><i class="pi pi-linkedin"></i> LinkedIn</a>
+      <a href="https://codepen.io/miriam-araujo" target="_blank"><i class="pi pi-codepen"></i> CodePen</a>
+    </div>
+  </footer>
 </template>
 
 <script>
 import FileUpload from "primevue/fileupload";
-import "primeicons/primeicons.css"; 
+import "primeicons/primeicons.css";
 import * as faceapi from "face-api.js";
 import "face-api.js/dist/face-api";
 
@@ -139,24 +159,33 @@ export default {
 </script>
 
 <style scoped>
-.face-recognition-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 75vh;
+/* 🏠 Intro Section */
+.intro-container {
   text-align: center;
-  background: #f9f9f9;
-  padding-top: 5px;
+  max-width: 700px;
+  margin: 15px auto;
+  padding: 10px;
 }
 
-.title {
-  font-size: 18px;
-  margin-bottom: 5px;
+.intro-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-.upload-container {
-  margin-bottom: 15px;
+.intro-text {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* ✅ Buttons (Aligned) */
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .custom-btn {
@@ -164,14 +193,14 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 7px 13px;
+  padding: 8px 14px;
   border: none;
   border-radius: 6px;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease-in-out;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .upload-btn {
@@ -187,7 +216,6 @@ export default {
 .clear-btn {
   background-color: #ff4c4c;
   color: white;
-  margin-top: 5px;
 }
 
 .clear-btn:hover {
@@ -195,11 +223,12 @@ export default {
   transform: scale(1.05);
 }
 
-.image-preview-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 5px;
+/* ✅ Compact Image & Canvas */
+.image-preview {
+  width: 180px;
+  height: 180px;
+  border-radius: 8px;
+  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.15);
 }
 
 .canvas-wrapper {
@@ -207,64 +236,39 @@ export default {
   display: inline-block;
 }
 
-.image-preview {
-  width: 190px;
-  height: 190px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0; 
-  animation: fadeIn 0.8s ease-in-out forwards; /* Smooth fade-in */
-}
-
-canvas {
+.canvas-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  width: 190px;
-  height: 190px;
+  width: 180px;
+  height: 180px;
 }
 
-.status-container {
-  margin-top: 4px;
+/* 📞 Compact Footer */
+.footer {
+  width: 100%;
+  background: #f9f9f9;
+  color: #444;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  margin-top: 15px;
 }
 
-.face-count {
-  font-size: 14px;
-  font-weight: bold;
-  color: #28a745;
-}
-
-.loading-spinner {
+.social-links {
   display: flex;
-  align-items: center;
   justify-content: center;
-  flex-direction: column;
+  gap: 8px;
 }
 
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.social-links a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease-in-out;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.social-links a:hover {
+  color: #0056b3;
 }
 </style>
