@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-    <!-- 🏠 Intro Section -->
     <div class="intro-container fade-in">
       <h1 class="intro-title">Welcome to My Face Detection App! 👋</h1>
       <p class="intro-text">
@@ -12,11 +11,9 @@
       </p>
     </div>
 
-    <!-- 🏠 Face Detection App -->
     <div class="face-recognition-container fade-in">
       <h2 class="title">Face Detection</h2>
 
-      <!-- Upload & Clear Button -->
       <div class="button-group">
         <FileUpload
           mode="basic"
@@ -33,7 +30,6 @@
         </button>
       </div>
 
-      <!-- Image Preview & Canvas -->
       <div class="image-preview-container" v-if="src">
         <div class="canvas-wrapper">
           <img
@@ -48,7 +44,6 @@
         </div>
       </div>
 
-      <!-- Status (Face Count / Loading) -->
       <div class="status-container">
         <div v-if="loading" class="loading-spinner">
           <div class="spinner"></div>
@@ -67,13 +62,12 @@
       </div>
     </div>
 
-    <!-- 📞 Footer -->
     <footer class="footer fade-in">
       <p>🔗 Connect with me:</p>
       <div class="social-links">
-        <a href="https://github.com/miriam-araujo" target="_blank"><i class="pi pi-github"></i> GitHub</a>
-        <a href="https://www.linkedin.com/in/miriam-araujo" target="_blank"><i class="pi pi-linkedin"></i> LinkedIn</a>
-        <a href="https://codepen.io/miriam-araujo" target="_blank"><i class="pi pi-codepen"></i> CodePen</a>
+        <a href="https://github.com/M-Araujo" target="_blank"><i class="pi pi-github"></i> GitHub</a>
+        <a href="https://www.linkedin.com/in/miriam-araujo-dev" target="_blank"><i class="pi pi-linkedin"></i> LinkedIn</a>
+        <a href="https://codepen.io/M-Araujo" target="_blank"><i class="pi pi-codepen"></i> CodePen</a>
       </div>
     </footer>
   </div>
@@ -161,14 +155,12 @@ export default {
 </script>
 
 <style scoped>
-/* 🏠 Global Layout */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* 🏠 Intro Section */
 .intro-container {
   text-align: center;
   max-width: 700px;
@@ -187,7 +179,6 @@ export default {
   line-height: 1.5;
 }
 
-/* 🖼️ Image Preview */
 .canvas-wrapper {
   position: relative;
   display: inline-block;
@@ -209,7 +200,6 @@ export default {
   height: 200px;
 }
 
-/* ✅ Buttons */
 .button-group {
   display: flex;
   gap: 10px;
@@ -244,7 +234,6 @@ export default {
   transform: scale(1.05);
 }
 
-/* 📞 Footer */
 .footer {
   width: 100%;
   background: #2c3e50;
@@ -254,14 +243,12 @@ export default {
   margin-top: auto;
 }
 
-/* 🔗 Social Links */
 .social-links {
   display: flex;
   justify-content: center;
   gap: 15px;
 }
 
-/* 🎨 Animations */
 .fade-in {
   opacity: 0;
   animation: fadeIn 0.8s ease-in-out forwards;
