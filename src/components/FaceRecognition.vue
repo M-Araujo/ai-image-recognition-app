@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <!-- 🏠 Intro Section -->
-    <div class="intro-container">
+    <div class="intro-container fade-in">
       <h1 class="intro-title">Welcome to My Face Detection App! 👋</h1>
       <p class="intro-text">
-        This is an AI-powered face detection app built with Vue.js & Face-api.js.  
-        Upload an image, and the app will detect faces instantly!  
+        This is an AI-powered face detection app built with Vue.js & Face-api.js.
+        Upload an image, and the app will detect faces instantly!
       </p>
       <p class="intro-text">
-        I'm Miriam Araújo, a passionate web developer focused on JavaScript, Vue.js, and AI applications.  
+        I'm Miriam Araújo, a passionate web developer focused on JavaScript, Vue.js, and AI applications.
       </p>
     </div>
 
     <!-- 🏠 Face Detection App -->
-    <div class="face-recognition-container">
+    <div class="face-recognition-container fade-in">
       <h2 class="title">Face Detection</h2>
 
       <!-- Upload & Clear Button -->
@@ -67,8 +67,8 @@
       </div>
     </div>
 
-    <!-- 📞 Footer (NOW FULL WIDTH AND NOT FIXED) -->
-    <footer class="footer">
+    <!-- 📞 Footer -->
+    <footer class="footer fade-in">
       <p>🔗 Connect with me:</p>
       <div class="social-links">
         <a href="https://github.com/miriam-araujo" target="_blank"><i class="pi pi-github"></i> GitHub</a>
@@ -78,7 +78,6 @@
     </footer>
   </div>
 </template>
-
 
 <script>
 import FileUpload from "primevue/fileupload";
@@ -160,20 +159,26 @@ export default {
   },
 };
 </script>
+
 <style scoped>
+/* 🏠 Global Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 /* 🏠 Intro Section */
 .intro-container {
   text-align: center;
   max-width: 700px;
-  margin: 15px auto;
+  margin: 20px auto;
   padding: 10px;
 }
 
 .intro-title {
   font-size: 22px;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
 }
 
 .intro-text {
@@ -182,9 +187,29 @@ export default {
   line-height: 1.5;
 }
 
+/* 🖼️ Image Preview */
+.canvas-wrapper {
+  position: relative;
+  display: inline-block;
+}
 
+.image-preview {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.15);
+}
 
-/* 🖼️ Buttons (Aligned & Styled) */
+.canvas-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+}
+
+/* ✅ Buttons */
 .button-group {
   display: flex;
   gap: 10px;
@@ -195,17 +220,13 @@ export default {
 .custom-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  padding: 8px 14px;
-  border: none;
+  padding: 10px 16px;
   border-radius: 6px;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease-in-out;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 5px;
 }
 
 .upload-btn {
@@ -213,150 +234,41 @@ export default {
   color: white;
 }
 
-.upload-btn:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
-}
-
 .clear-btn {
   background-color: #ff4c4c;
   color: white;
 }
 
-.clear-btn:hover {
-  background-color: #d32f2f;
+.clear-btn:hover,
+.upload-btn:hover {
   transform: scale(1.05);
 }
 
-/* 🖼️ Image Preview & Canvas */
-.image-preview-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.canvas-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.image-preview {
-  width: 180px;
-  max-height: 180px;
-  object-fit: contain; /* Keeps aspect ratio & prevents distortion */
-  border-radius: 8px;
-  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.15);
-}
-
-.canvas-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 180px;
-  height: 180px;
-}
-
-/* 🔄 Status & Loading */
-.status-container {
-  text-align: center;
-  margin-top: 8px;
-}
-
-.face-count {
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 5px;
-}
-
-.loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  border-top-color: #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* ✅ Ensures full viewport height */
-  margin: 0;
-  padding: 0;
-}
-
-.app-container {
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* ✅ Ensures it stretches fully */
-}
-
-
-
+/* 📞 Footer */
 .footer {
-  max-width: 100%;
+  width: 100%;
   background: #2c3e50;
   color: white;
   text-align: center;
-  padding: 10px 0;
-  font-size: 14px;
-  margin-top: auto; /* ✅ Pushes it down */
+  padding: 15px 0;
+  margin-top: auto;
 }
-
-
 
 /* 🔗 Social Links */
 .social-links {
   display: flex;
   justify-content: center;
   gap: 15px;
-  margin-top: 5px;
 }
-
-.social-links a {
-  color: #ffffff;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease-in-out;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.social-links a:hover {
-  color: #1abc9c;
-}
-
-.social-links i {
-  font-size: 18px;
-}
-
 
 /* 🎨 Animations */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.8s ease-in-out forwards;
+}
+
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 </style>
