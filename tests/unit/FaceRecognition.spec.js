@@ -103,5 +103,46 @@ describe("FaceRecognition.vue", () => {
 
 
 
+    it("sets faceCount to 0 if no faces are detected", async () => {
+        // Mock `detectFaces` to return no faces
+        vi.spyOn(wrapper.vm, "detectFaces").mockImplementation(async () => {
+            wrapper.vm.faceCount = 0;
+        });
+
+        // Simulate image upload
+        wrapper.vm.src = "data:image/jpeg;base64,mockedImageData";
+        await nextTick();
+
+        // Find the <img> element
+        const img = wrapper.find("img");
+        expect(img.exists()).toBe(true);
+
+        // Simulate image load event
+        await img.trigger("load");
+
+        // Check if faceCount is 0
+        expect(wrapper.vm.faceCount).toBe(0);
+    });
+
+
+    it("clears image and resets faceCount when clearImage is called", async () => {
+        // Mock URL.revokeObjectURL to prevent errors
+        global.URL.revokeObjectURL = vi.fn();
+
+        // Simulate an uploaded image and detected faces
+        wrapper.vm.src = "data:image/jpeg;base64,mockedImageData";
+        wrapper.vm.faceCount = 2;
+
+        // Call the clearImage method
+        wrapper.vm.clearImage();
+
+        // Ensure both src and faceCount are reset
+        expect(wrapper.vm.src).toBeNull();
+        expect(wrapper.vm.faceCount).toBeNull();
+
+        // Ensure URL.revokeObjectURL was called if needed
+        expect(global.URL.revokeObjectURL).toHaveBeenCalled();
+    });
+
 
 });
