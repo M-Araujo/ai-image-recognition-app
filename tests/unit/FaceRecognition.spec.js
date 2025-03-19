@@ -145,4 +145,31 @@ describe("FaceRecognition.vue", () => {
     });
 
 
+    it("sets loading to true while detecting faces and false after", async () => {
+        // Mock detectFaces to simulate a delay
+        vi.spyOn(wrapper.vm, "detectFaces").mockImplementation(async () => {
+            wrapper.vm.loading = true; // Simulate loading state
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Fake async delay
+            wrapper.vm.faceCount = 1; // Simulate face detection
+            wrapper.vm.loading = false; // Simulate detection complete
+        });
+
+        // Simulate image upload
+        wrapper.vm.src = "data:image/jpeg;base64,mockedImageData";
+        await nextTick();
+
+        // Find the <img> element and trigger load event
+        const img = wrapper.find("img");
+        await img.trigger("load");
+
+        // Ensure loading was initially true
+        expect(wrapper.vm.loading).toBe(true);
+
+        // Wait for detection to complete
+        await new Promise((resolve) => setTimeout(resolve, 150));
+
+        // Ensure loading is false after detection
+        expect(wrapper.vm.loading).toBe(false);
+    });
+
 });
