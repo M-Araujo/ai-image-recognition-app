@@ -65,7 +65,6 @@ describe("FaceRecognition.vue", () => {
         expect(wrapper.vm.faceCount).toBe(1);
     });
 
-    /* */
 
     it("calls loadModels on mount", async () => {
         const loadModelsSpy = vi.spyOn(FaceRecognition.methods, "loadModels");
@@ -76,5 +75,33 @@ describe("FaceRecognition.vue", () => {
 
         expect(loadModelsSpy).toHaveBeenCalled();
     });
+
+
+    it("updates src when a file is selected", async () => {
+        const fileMock = new File(["dummy data"], "face.jpg", { type: "image/jpeg" });
+
+        const wrapper = mount(FaceRecognition, {
+            global: { plugins: [PrimeVue], components: { FileUpload } },
+        });
+
+        // Mock FileReader
+        vi.spyOn(global, "FileReader").mockImplementation(() => {
+            return {
+                readAsDataURL: vi.fn(function () {
+                    this.onload({ target: { result: "data:image/jpeg;base64,mockedImageData" } });
+                }),
+            };
+        });
+
+        await wrapper.vm.onFileSelect({ files: [fileMock] });
+
+        // Wait for next DOM update cycle
+        await nextTick();
+
+        expect(wrapper.vm.src).toBe("data:image/jpeg;base64,mockedImageData"); // Ensure `src` updates correctly
+    });
+
+
+
 
 });
