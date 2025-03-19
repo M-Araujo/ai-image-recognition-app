@@ -172,4 +172,26 @@ describe("FaceRecognition.vue", () => {
         expect(wrapper.vm.loading).toBe(false);
     });
 
+    it("correctly counts multiple faces detected", async () => {
+        // Mock `detectFaces` to return multiple faces
+        vi.spyOn(wrapper.vm, "detectFaces").mockImplementation(async () => {
+            wrapper.vm.faceCount = 3; // Simulate detecting 3 faces
+        });
+
+        // Simulate image upload
+        wrapper.vm.src = "data:image/jpeg;base64,mockedImageData";
+        await nextTick();
+
+        // Find the <img> element
+        const img = wrapper.find("img");
+        expect(img.exists()).toBe(true);
+
+        // Simulate the image load event
+        await img.trigger("load");
+
+        // Ensure `faceCount` is 3
+        expect(wrapper.vm.faceCount).toBe(3);
+    });
+
+
 });
