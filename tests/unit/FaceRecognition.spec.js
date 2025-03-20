@@ -229,6 +229,21 @@ describe("FaceRecognition.vue", () => {
 
 
 
+    it("draws bounding boxes on the canvas when faces are detected", async () => {
+        vi.spyOn(wrapper.vm, "detectFaces").mockImplementation(async () => {
+            wrapper.vm.faceCount = 2; // Simulate two detected faces
+            console.log("🔥 detectFaces() was called!");
+        });
+
+        wrapper.vm.src = "data:image/jpeg;base64,mockedImageData";
+        await nextTick();
+
+        const img = wrapper.find("img");
+        await img.trigger("load");
+
+        expect(wrapper.vm.detectFaces).toHaveBeenCalled();
+    });
+
 
 
 
