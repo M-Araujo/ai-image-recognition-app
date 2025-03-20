@@ -3,11 +3,12 @@
     <div class="intro-container fade-in">
       <h1 class="intro-title">Welcome to My Face Detection App! 👋</h1>
       <p class="intro-text">
-        This is an AI-powered face detection app built with Vue.js & Face-api.js.
-        Upload an image, and the app will detect faces instantly!
+        This is an AI-powered face detection app built with Vue.js & Face-api.js. Upload
+        an image, and the app will detect faces instantly!
       </p>
       <p class="intro-text">
-        I'm Miriam Araújo, a passionate web developer focused on JavaScript, Vue.js, and AI applications.
+        I'm Miriam Araújo, a passionate web developer focused on JavaScript, Vue.js, and
+        AI applications.
       </p>
     </div>
 
@@ -65,9 +66,15 @@
     <footer class="footer fade-in">
       <p>🔗 Connect with me:</p>
       <div class="social-links">
-        <a href="https://github.com/M-Araujo" target="_blank"><i class="pi pi-github"></i> GitHub</a>
-        <a href="https://www.linkedin.com/in/miriam-araujo-dev" target="_blank"><i class="pi pi-linkedin"></i> LinkedIn</a>
-        <a href="https://codepen.io/M-Araujo" target="_blank"><i class="pi pi-codepen"></i> CodePen</a>
+        <a href="https://github.com/M-Araujo" target="_blank"
+          ><i class="pi pi-github"></i> GitHub</a
+        >
+        <a href="https://www.linkedin.com/in/miriam-araujo-dev" target="_blank"
+          ><i class="pi pi-linkedin"></i> LinkedIn</a
+        >
+        <a href="https://codepen.io/M-Araujo" target="_blank"
+          ><i class="pi pi-codepen"></i> CodePen</a
+        >
       </div>
     </footer>
   </div>
@@ -117,32 +124,68 @@ export default {
       this.loading = true;
       this.faceCount = null;
       await this.$nextTick();
-      const image = this.$refs.imageRef;
-      const canvas = this.$refs.canvasRef;
-      const displaySize = { width: image.width, height: image.height };
-      canvas.width = displaySize.width;
-      canvas.height = displaySize.height;
+
       try {
+        const image = this.$refs.imageRef;
+        const canvas = this.$refs.canvasRef;
+
+        console.log("🖼️ Image loaded:", image);
+
+        if (!image) {
+          console.error("❌ Image reference is missing");
+          this.loading = false;
+          return;
+        }
+
+        if (!canvas) {
+          console.error("❌ Canvas reference is missing");
+          this.loading = false;
+          return;
+        }
+
+        const displaySize = { width: image.width, height: image.height };
+        canvas.width = displaySize.width;
+        canvas.height = displaySize.height;
+
+        // ✅ Detect faces
         const detections = await faceapi.detectAllFaces(
           image,
           new faceapi.TinyFaceDetectorOptions()
         );
+
+        console.log("🎯 Detections:", detections);
+
+        // ✅ Move face detection check BEFORE using detections
+        if (!detections || detections.length === 0) {
+          console.warn("⚠️ No faces detected!");
+          this.faceCount = 0;
+          this.loading = false;
+          return;
+        }
+
+        // ✅ Resize detections
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const ctx = canvas.getContext("2d");
+
+        console.log("🎨 Drawing boxes on canvas...");
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         resizedDetections.forEach((detection) => {
           const box = detection.box;
+          console.log("🖍️ Drawing box at:", box.x, box.y, box.width, box.height);
           ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
           ctx.strokeRect(box.x, box.y, box.width, box.height);
         });
+
+        // ✅ Set correct face count
         this.faceCount = resizedDetections.length;
       } catch (error) {
-        console.error("❌ Error detecting faces:", error);
+        console.error("❌ Face detection failed:", error);
       }
+
       this.loading = false;
     },
-
     clearImage() {
       if (this.src) {
         URL.revokeObjectURL(this.src);
@@ -255,7 +298,13 @@ export default {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
