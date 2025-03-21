@@ -8,4 +8,6 @@ export default defineConfig({
     environment: "jsdom", // ✅ Simulates a browser
     setupFiles: "./vitest.setup.js", // ✅ Ensure this file exists
   },
+  base: '/ai-image-recognition-app/',
 });
+
