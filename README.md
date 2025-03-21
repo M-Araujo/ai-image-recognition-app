@@ -1,5 +1,61 @@
-# Vue 3 + Vite
+# 🧠 AI Face Detection App 🎯
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This is an AI-powered face detection app built with **Vue.js** and **Face-api.js**.  
+It allows users to upload an image and detects faces instantly with visual bounding boxes.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+> ⚡ Built with ❤️ by [Miriam Araújo](https://www.linkedin.com/in/miriam-araujo-dev)
+
+---
+
+### 🌍 Live Demo  
+👉 [Try it now!](https://m-araujo.github.io/ai-image-recognition-app/)  
+
+---
+
+### 📸 Features
+- 📁 Upload an image
+- 🧠 Face detection using Face-api.js
+- 🖍️ Red bounding boxes around detected faces
+- 📊 Displays how many faces were found
+- ✨ Smooth transitions and responsive layout
+
+---
+
+### 🛠 Tech Stack
+- [Vue.js 3](https://vuejs.org/)
+- [Vite](https://vitejs.dev/)
+- [Face-api.js](https://github.com/justadudewhohacks/face-api.js)
+- [PrimeVue](https://primevue.org/) components
+- [Vitest](https://vitest.dev/) for unit testing
+- [GitHub Pages](https://pages.github.com/) for deployment
+
+---
+
+### 🧪 Unit Tested Features
+- Image upload and preview rendering
+- Calls to face detection logic
+- Loading state toggles
+- Error handling and recovery
+- Canvas drawing of detection boxes
+
+---
+
+### 🚀 Run Locally
+
+```bash
+git clone https://github.com/M-Araujo/ai-image-recognition-app.git
+cd ai-image-recognition-app
+npm install
+npm run dev
+
+
+🙌 Credits
+Special thanks to face-api.js
+And to all the awesome open source devs out there 💖
+
+📫 Contact
+Feel free to connect or reach out on:
+
+- 🌐 [LinkedIn](https://www.linkedin.com/in/miriam-araujo-dev/)
+- 💻 [GitHub](https://github.com/M-Araujo)
+- 🧪 [CodePen](https://codepen.io/M-Araujo)
