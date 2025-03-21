@@ -59,3 +59,15 @@ Feel free to connect or reach out on:
 - 🌐 [LinkedIn](https://www.linkedin.com/in/miriam-araujo-dev/)
 - 💻 [GitHub](https://github.com/M-Araujo)
 - 🧪 [CodePen](https://codepen.io/M-Araujo)
+
+---
+
+### 🌱 Personal Note
+
+This project gave me the opportunity to explore AI integration and testing in a Vue 3 environment.  
+I focused on writing clean, testable code, handling async logic, and building a smooth user experience.
+
+It was also my first time deploying a Vue app using GitHub Pages — learning how to handle public assets and make everything work live was a great experience.
+
+Working with face-api.js challenged me to think about model loading, error handling, and how to give users helpful feedback.  
+Overall, this project helped me grow my skills and gave me ideas for future AI-driven interfaces.
