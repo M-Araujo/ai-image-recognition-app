@@ -101,7 +101,8 @@ export default {
   methods: {
     async loadModels() {
       try {
-        await faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+        await faceapi.nets.tinyFaceDetector.loadFromUri(import.meta.env.BASE_URL + "models");
+
       } catch (error) {
         console.error("❌ Error loading Face-api.js models", error);
       }
