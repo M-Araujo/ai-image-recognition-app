@@ -21,6 +21,7 @@
           @select="onFileSelect"
           customUpload
           auto
+          accept="image/jpeg, image/png" 
           class="custom-btn upload-btn"
         >
           <i class="pi pi-upload"></i> Upload Image
@@ -48,8 +49,8 @@
       <div class="status-container">
         <div v-if="loading" class="loading-spinner">
           <div class="spinner"></div>
-          <p>Detecting Faces...</p>
-        </div>
+            <p>Detecting Faces...</p>
+          </div>
 
         <p class="face-count">
           <span v-if="faceCount !== null && faceCount > 0" class="text-green-500">
@@ -101,7 +102,6 @@ export default {
     async loadModels() {
       try {
         await faceapi.nets.tinyFaceDetector.loadFromUri(import.meta.env.BASE_URL + "models");
-
       } catch (error) {
         console.error("❌ Error loading Face-api.js models", error);
       }
@@ -120,10 +120,14 @@ export default {
     },
 
     async detectFaces() {
+      console.log('detecting...');
+      console.log('setting loading to true');
       if (!this.src) return;
       this.loading = true;
       this.faceCount = null;
       await this.$nextTick();
+
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       try {
         const image = this.$refs.imageRef;
@@ -149,7 +153,6 @@ export default {
         );
 
         if (!detections || detections.length === 0) {
-          console.warn("⚠️ No faces detected!");
           this.faceCount = 0;
           this.loading = false;
           return;
@@ -279,6 +282,29 @@ export default {
 .fade-in {
   opacity: 0;
   animation: fadeIn 0.8s ease-in-out forwards;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #007bff; 
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes fadeIn {
