@@ -58,7 +58,6 @@
           <span v-else-if="faceCount === 0" class="text-red-500">
             🔴 No Faces Detected
           </span>
-          <span v-else> ⏳ Waiting for image...</span>
         </p>
       </div>
     </div>
@@ -130,16 +129,12 @@ export default {
         const image = this.$refs.imageRef;
         const canvas = this.$refs.canvasRef;
 
-        console.log("🖼️ Image loaded:", image);
-
         if (!image) {
-          console.error("❌ Image reference is missing");
           this.loading = false;
           return;
         }
 
         if (!canvas) {
-          console.error("❌ Canvas reference is missing");
           this.loading = false;
           return;
         }
@@ -148,15 +143,11 @@ export default {
         canvas.width = displaySize.width;
         canvas.height = displaySize.height;
 
-        // ✅ Detect faces
         const detections = await faceapi.detectAllFaces(
           image,
           new faceapi.TinyFaceDetectorOptions()
         );
 
-        console.log("🎯 Detections:", detections);
-
-        // ✅ Move face detection check BEFORE using detections
         if (!detections || detections.length === 0) {
           console.warn("⚠️ No faces detected!");
           this.faceCount = 0;
@@ -164,22 +155,17 @@ export default {
           return;
         }
 
-        // ✅ Resize detections
         const resizedDetections = faceapi.resizeResults(detections, displaySize);
         const ctx = canvas.getContext("2d");
-
-        console.log("🎨 Drawing boxes on canvas...");
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         resizedDetections.forEach((detection) => {
           const box = detection.box;
-          console.log("🖍️ Drawing box at:", box.x, box.y, box.width, box.height);
           ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
           ctx.strokeRect(box.x, box.y, box.width, box.height);
         });
 
-        // ✅ Set correct face count
         this.faceCount = resizedDetections.length;
       } catch (error) {
         console.error("❌ Face detection failed:", error);
@@ -219,7 +205,6 @@ export default {
 
 .intro-text {
   font-size: 15px;
-  color: #555;
   line-height: 1.5;
 }
 
@@ -280,8 +265,6 @@ export default {
 
 .footer {
   width: 100%;
-  background: #2c3e50;
-  color: white;
   text-align: center;
   padding: 15px 0;
   margin-top: auto;
@@ -308,4 +291,5 @@ export default {
     transform: translateY(0);
   }
 }
+
 </style>
